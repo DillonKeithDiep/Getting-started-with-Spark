@@ -3,8 +3,8 @@ package com.sparkdemorow
 import java.io.File
 
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.SparkSession
 
 /**
 * @author ${user.name}
@@ -38,5 +38,19 @@ object App {
 
         val dfToRDD = df.rdd
         println(dfToRDD.count())
+
+        df.describe().show()
+
+        df.agg(
+            min("Memory ()").as("min"),
+            max("Memory ()").as("max"),
+            mean("Memory ()").as("mean"),
+            stddev_pop("Memory ()").as("stddev_pop"),
+            count("Memory ()").divide(count(lit(1))).as("nullPrevalence")
+        ).show()
+
+        df.agg(
+            covar_pop("Core Clock ()", "Price (�)").as("Price & CC Covar")
+        ).show()
     }
 }
